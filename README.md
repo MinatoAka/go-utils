@@ -5,10 +5,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Saweria](https://img.shields.io/badge/Support-Saweria-orange)](https://saweria.co/AKaAturDompet)
 
-Kumpulan utilitas Go ringan untuk membantu tugas-tugas umum seperti format mata uang, manipulasi string, environment variable, JSON, dan format waktu.
+Kumpulan utilitas Go ringan untuk membantu tugas-tugas umum seperti format mata uang, manipulasi string, environment variable, JSON, console, dan format waktu.
 
 ## Fitur
 
+- **console** — mencetak teks dengan efek mengetik dan timestamp untuk log
 - **currency** — format angka menjadi mata uang Rupiah biasa maupun ringkas
 - **env** — membaca environment variable dan memuat file `.env`
 - **json** — membaca dan menulis JSON secara pretty print dengan penulisan atomik
@@ -26,6 +27,26 @@ go get github.com/MinatoAka/go-utils
 Memerlukan Go 1.27.3 atau lebih baru.
 
 ## Penggunaan
+
+### Console
+
+```go
+package main
+
+import (
+    "time"
+
+    "github.com/MinatoAka/go-utils/console"
+)
+
+func main() {
+    console.FmtTypeWriter("Memproses permintaan...", 30*time.Millisecond)
+    console.FmtLogWriter("Server berhasil dijalankan", 20*time.Millisecond)
+}
+```
+
+- `FmtTypeWriter` mencetak teks per karakter dengan jeda spasi yang lebih cepat.
+- `FmtLogWriter` menambahkan timestamp dengan format `2006/01/02 15:04:05` sebelum teks.
 
 ### Currency
 
@@ -146,6 +167,7 @@ func main() {
 ## Struktur Package
 
 ```text
+console/    Efek mengetik dan log dengan timestamp
 currency/   Format mata uang Rupiah dan format ringkas
 env/        Environment variable dan pembacaan file .env
 json/       Pembacaan dan penulisan file JSON
