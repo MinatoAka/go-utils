@@ -10,7 +10,7 @@ Kumpulan utilitas Go ringan untuk membantu tugas-tugas umum seperti format mata 
 ## Fitur
 
 - **console** — mencetak teks dengan efek mengetik dan timestamp untuk log
-- **currency** — format angka menjadi mata uang Rupiah biasa maupun ringkas
+- **currency** — format angka menjadi mata uang `Rupiah` & `USD` biasa maupun ringkas
 - **env** — membaca environment variable dan memuat file `.env`
 - **json** — membaca dan menulis JSON secara pretty print dengan penulisan atomik
 - **string** — konversi string ke angka dan sanitasi teks
