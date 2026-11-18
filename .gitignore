@@ -29,6 +29,11 @@ go.work.sum
 # env file
 .env
 
+# json file
+.json
+
 # Editor/IDE
 # .idea/
+.db
+
 # .vscode/
