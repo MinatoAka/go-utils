@@ -7,21 +7,15 @@ import (
 )
 
 // GetEnv mengambil value dari environment variable. 
-// Jika kosong, kembalikan defaultValue.
+// Jika kosong atau tidak ada, kembalikan defaultValue.
 func GetEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
+	if value, exists := os.LookupEnv(key); exists && value != "" {
 		return value
 	}
 	return defaultValue
 }
 
-// GetEnvInt sama seperti GetEnv tapi untuk integer.
-func GetEnvInt(key string, defaultValue int) int {
-	// (Bisa ditambahin logic strconv.Atoi di sini)
-	return defaultValue 
-}
-
-// LoadDotEnv sederhana untuk baca file .env di root project (tanpa dependency eksternal).
+// LoadDotEnv membaca file .env sederhana dan set ke os.Setenv.
 func LoadDotEnv(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
