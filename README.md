@@ -60,11 +60,19 @@ import (
 )
 
 func main() {
+    // Format Rupiah
     fmt.Println(currency.FormatRupiah(32782000))
     // Rp 32.782.000
 
     fmt.Println(currency.FormatRupiahCompact(2500000))
     // Rp 2,5 Jt
+
+    // Format USD
+    fmt.Println(currency.FormatUSD(1234567.89))
+    // $1,234,567.89
+
+    fmt.Println(currency.FormatUSDCompact(2500000))
+    // $2.5M
 }
 ```
 
