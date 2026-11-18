@@ -28,16 +28,18 @@ func FormatRupiah(n float64) string {
 }
 
 // FormatRupiahCompact memformat angka besar menjadi singkat (contoh: "15 Jt", "1,5 M").
-// Opsional, tapi sering berguna buat UI/Dashboard.
 func FormatRupiahCompact(n float64) string {
 	if n >= 1000000000 {
-		return "Rp " + strconv.FormatFloat(n/1000000000, 'f', 1, 64) + " M"
+		val := strings.Replace(strconv.FormatFloat(n/1000000000, 'f', 1, 64), ".", ",", 1)
+		return "Rp " + val + " M"
 	}
 	if n >= 1000000 {
-		return "Rp " + strconv.FormatFloat(n/1000000, 'f', 1, 64) + " Jt"
+		val := strings.Replace(strconv.FormatFloat(n/1000000, 'f', 1, 64), ".", ",", 1)
+		return "Rp " + val + " Jt"
 	}
 	if n >= 1000 {
-		return "Rp " + strconv.FormatFloat(n/1000, 'f', 1, 64) + " Rb"
+		val := strings.Replace(strconv.FormatFloat(n/1000, 'f', 1, 64), ".", ",", 1)
+		return "Rp " + val + " Rb"
 	}
 	return FormatRupiah(n)
 }
