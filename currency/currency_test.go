@@ -152,4 +152,3 @@ func TestFormatUSDCompact(t *testing.T) {
 		}
 	}
 }
-}
