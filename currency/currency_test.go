@@ -15,7 +15,7 @@ func TestFormatRupiah(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		got := FormatRupiah(tt.input)
+		got := FormatRupiah(tt.input, "IDR")
 		if got != tt.want {
 			t.Errorf("FormatRupiah(%v) = %q, ingin %q", tt.input, got, tt.want)
 		}
@@ -55,7 +55,7 @@ func TestFormatUSD(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		got := FormatUSD(tt.input)
+		got := FormatUSD(tt.input, "USD")
 		if got != tt.want {
 			t.Errorf("FormatUSD(%v) = %q, ingin %q", tt.input, got, tt.want)
 		}
