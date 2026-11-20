@@ -5,27 +5,70 @@ import (
 	"strings"
 )
 
-// FormatRupiah mengubah angka int64 (satuan Rupiah) menjadi format Rupiah.
-// Contoh: 15000000 -> "Rp 15.000.000"
-func FormatRupiah(n int64) string {
-	sign := ""
-	if n < 0 {
-		sign = "-"
-		n = -n
+const (
+	// CurrencyIDR untuk Rupiah.
+	CurrencyIDR = "IDR"
+	// CurrencyUSD untuk Dollar.
+	CurrencyUSD = "USD"
+)
+
+// FormatMoney format angka jadi mata uang.
+// Otomatis ngenalin "IDR", "RP", "RUPIAH" -> Rupiah
+// dan "USD", "$", "DOLLAR" -> Dollar.
+func FormatMoney(amount any, currency string) string {
+	var num float64
+	switch v := amount.(type) {
+	case int:
+		num = float64(v)
+	case int32:
+		num = float64(v)
+	case int64:
+		num = float64(v)
+	case float32:
+		num = float64(v)
+	case float64:
+		num = v
+	default:
+		return ""
 	}
-	
-	s := strconv.FormatInt(n, 10)
+
+	sign := ""
+	if num < 0 {
+		sign = "-"
+		num = -num
+	}
+
+	switch strings.ToUpper(strings.TrimSpace(currency)) {
+	case "IDR", "RP", "RUPIAH":
+		// IDR tanpa desimal
+		s := strconv.FormatFloat(num, 'f', 0, 64)
+		return sign + "Rp " + groupThousands(s, '.')
+
+	case "USD", "$", "DOLLAR", "US":
+		// USD selalu 2 desimal
+		val := strconv.FormatFloat(num, 'f', 2, 64)
+		parts := strings.Split(val, ".")
+		return sign + "$" + groupThousands(parts[0], ',') + "." + parts[1]
+
+	default:
+		return sign + strconv.FormatFloat(num, 'f', 2, 64)
+	}
+}
+
+func groupThousands(s string, sep byte) string {
 	var b strings.Builder
-	b.WriteString("Rp ")
-	b.WriteString(sign)
-	
 	for i, c := range s {
 		if i > 0 && (len(s)-i)%3 == 0 {
-			b.WriteByte('.')
+			b.WriteByte(sep)
 		}
 		b.WriteRune(c)
 	}
 	return b.String()
+}
+
+// FormatRupiah shortcut buat FormatMoney(n, "IDR").
+func FormatRupiah(n int64) string {
+	return FormatMoney(n, CurrencyIDR)
 }
 
 // FormatRupiahCompact memformat angka besar menjadi singkat menggunakan pure integer math.
@@ -43,37 +86,9 @@ func FormatRupiahCompact(n int64) string {
 	return FormatRupiah(n)
 }
 
-// FormatUSD mengubah angka float64 menjadi format USD dengan 2 desimal.
-// Contoh: 1234567.89 -> "$1,234,567.89"
+// FormatUSD shortcut buat FormatMoney(n, "USD").
 func FormatUSD(n float64) string {
-	sign := ""
-	if n < 0 {
-		sign = "-"
-		n = -n
-	}
-	
-	// Format dengan 2 desimal
-	val := strconv.FormatFloat(n, 'f', 2, 64)
-	parts := strings.Split(val, ".")
-	intPart := parts[0]
-	decPart := parts[1]
-	
-	// Tambahkan koma pemisah ribuan
-	var b strings.Builder
-	b.WriteString("$")
-	b.WriteString(sign)
-	
-	for i, c := range intPart {
-		if i > 0 && (len(intPart)-i)%3 == 0 {
-			b.WriteByte(',')
-		}
-		b.WriteRune(c)
-	}
-	
-	b.WriteByte('.')
-	b.WriteString(decPart)
-	
-	return b.String()
+	return FormatMoney(n, CurrencyUSD)
 }
 
 // FormatUSDCompact memformat angka USD besar menjadi singkat.
