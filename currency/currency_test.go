@@ -2,6 +2,32 @@ package currency
 
 import "testing"
 
+func TestFormatMoney(t *testing.T) {
+	tests := []struct {
+		input    any
+		currency string
+		want     string
+	}{
+		{1500000, "IDR", "Rp 1.500.000"},
+		{1500000, "rp", "Rp 1.500.000"},
+		{1500000, "Rupiah", "Rp 1.500.000"},
+		{1500.5, "USD", "$1,500.50"},
+		{1500.5, "$", "$1,500.50"},
+		{1500.5, "dollar", "$1,500.50"},
+		{-2500000, "IDR", "-Rp 2.500.000"},
+		{-99.9, "USD", "-$99.90"},
+		{0, "IDR", "Rp 0"},
+		{0, "USD", "$0.00"},
+	}
+
+	for _, tt := range tests {
+		got := FormatMoney(tt.input, tt.currency)
+		if got != tt.want {
+			t.Errorf("FormatMoney(%v, %q) = %q, ingin %q", tt.input, tt.currency, got, tt.want)
+		}
+	}
+}
+
 func TestFormatRupiah(t *testing.T) {
 	tests := []struct {
 		input int64
@@ -10,12 +36,12 @@ func TestFormatRupiah(t *testing.T) {
 		{15000, "Rp 15.000"},
 		{32782000, "Rp 32.782.000"},
 		{0, "Rp 0"},
-		{-50000, "Rp -50.000"},
+		{-50000, "-Rp 50.000"},
 		{1250, "Rp 1.250"},
 	}
 
 	for _, tt := range tests {
-		got := FormatRupiah(tt.input, "IDR")
+		got := FormatRupiah(tt.input)
 		if got != tt.want {
 			t.Errorf("FormatRupiah(%v) = %q, ingin %q", tt.input, got, tt.want)
 		}
@@ -47,15 +73,15 @@ func TestFormatUSD(t *testing.T) {
 		input float64
 		want  string
 	}{
-		{1234567.89, "$1,234,567.89"},
+		{15000, "$15,000.00"},
+		{1500.5, "$1,500.50"},
 		{0, "$0.00"},
-		{-500.5, "$-500.50"},
-		{999999.99, "$999,999.99"},
-		{1000, "$1,000.00"},
+		{-50000, "-$50,000.00"},
+		{99.9, "$99.90"},
 	}
 
 	for _, tt := range tests {
-		got := FormatUSD(tt.input, "USD")
+		got := FormatUSD(tt.input)
 		if got != tt.want {
 			t.Errorf("FormatUSD(%v) = %q, ingin %q", tt.input, got, tt.want)
 		}
