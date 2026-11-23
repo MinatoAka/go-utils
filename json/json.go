@@ -58,7 +58,7 @@ func Write[T any](path string, v T) error {
 }
 
 // LoadOrCreate membaca file, atau membuat file baru dengan nilai default jika belum ada.
-// Sangat berguna untuk inisialisasi state/config di awal bot.
+// Sangat berguna untuk inisialisasi
 func LoadOrCreate[T any](path string, defaultVal T) (T, error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// File belum ada, tulis nilai default
