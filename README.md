@@ -12,7 +12,7 @@ Kumpulan utilitas Go ringan untuk membantu tugas-tugas umum seperti format mata 
 - **console** — mencetak teks dengan efek mengetik dan timestamp untuk log
 - **currency** — format angka menjadi mata uang `Rupiah` & `USD` biasa maupun ringkas
 - **env** — membaca environment variable dan memuat file `.env`
-- **json** — membaca dan menulis JSON secara pretty print dengan penulisan atomik
+- **json** — membaca dan menulis JSON
 - **string** — konversi string ke angka dan sanitasi teks
 - **timex** — format tanggal dan waktu untuk keperluan database maupun format Indonesia
 - **Unit tests** — tersedia untuk setiap package
@@ -103,32 +103,6 @@ DB_HOST=localhost
 DB_PORT=5432
 ```
 
-### JSON
-
-```go
-package main
-
-import "github.com/MinatoAka/go-utils/json"
-
-type Config struct {
-    Name string `json:"name"`
-    Port int    `json:"port"`
-}
-
-func main() {
-    config := Config{Name: "server", Port: 8080}
-
-    if err := json.WriteFile("config.json", config); err != nil {
-        panic(err)
-    }
-
-    var loaded Config
-    if err := json.ReadFile("config.json", &loaded); err != nil {
-        panic(err)
-    }
-}
-```
-
 ### String
 
 ```go
@@ -171,6 +145,80 @@ func main() {
     fmt.Println(timex.NowDateTime())
 }
 ```
+
+### 📦 JSON Package (`go-utils/json`)
+
+A high-performance, type-safe JSON mini-database. Replaces traditional `os.ReadFile` and `os.WriteFile` with atomic writes, generics, and zero-boilerplate state management.
+
+#### ✨ Features
+- **Generics (Type-Safe):** No more `interface{}` casting. `Read[T]` and `Write[T]` return exactly what you expect.
+- **Atomic Write:** Uses temporary files + `os.Rename` to prevent file corruption during power loss.
+- **Read-Modify-Write:** The `Update` function safely handles reading, mutating, and saving data in one step.
+- **Fast I/O:** Skips `fsync` by default for maximum execution speed (ideal for trading bots).
+- **Pretty Print (Optional):** Built-in helpers for human-readable formatting when debugging.
+
+#### 🚀 Usage
+
+##### 1. Basic Read & Write
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/MinatoAka/go-utils/json"
+)
+
+type Config struct {
+    Name string `json:"name"`
+    Port int    `json:"port"`
+}
+
+func main() {
+    cfg := Config{Name: "server", Port: 8080}
+
+    // Write to file (Atomic & Fast)
+    if err := json.Write("config.json", cfg); err != nil {
+        panic(err)
+    }
+
+    // Read from file into a specific type
+    loaded, err := json.Read[Config]("config.json")
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Loaded: %s on port %d\n", loaded.Name, loaded.Port)
+}
+```
+
+##### 2. Load or Create (Initialization)
+```go
+defaultConfig := Config{Name: "default", Port: 3000}
+
+// Reads if exists, creates with defaultConfig if missing
+cfg, err := json.LoadOrCreate("config.json", defaultConfig)
+if err != nil {
+    panic(err)
+}
+```
+
+##### 3. Update (Read-Modify-Write)
+```go
+err := json.Update("config.json", func(c *Config) {
+    c.Port = 9090 // Only change the port, leave other fields intact
+})
+```
+
+##### 4. Pretty Print (Debugging)
+```go
+// 1. Print to terminal
+prettyStr, _ := json.MarshalPretty(cfg)
+fmt.Println(prettyStr)
+
+// 2. Write pretty JSON to file
+json.WritePretty("debug.json", cfg)
+```
+
 
 ## Struktur Package
 
